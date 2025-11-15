@@ -1,19 +1,35 @@
 import express from "express";
 import cors from "cors";
+import { connectDB } from "./config/db.js";
 
+import foodRouter from "./routes/foodRoute.js";
+import userRouter from "./routes/userRoutes.js";
+import "dotenv/config.js";
+import cartRouter from "./routes/cartRoute.js";
+import orderRouter from "./routes/orderRoute.js";
+
+//app config
 const app = express();
-const PORT = 5000;
+const port = process.env.PORT || 4000;
 
-// Middleware
-app.use(cors());
+//middleware
 app.use(express.json());
+app.use(cors());
 
-// Sample route
-app.get("/", (req, res) => {
-  res.send("Welcome to the Food Delivery App Backend!");
+//db connection
+connectDB();
+
+//api endpoints
+app.use("/api/food", foodRouter);
+app.use("/images", express.static("uploads"));
+app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/order", orderRouter);
+
+app.get("/", (req, resp) => {
+  resp.send("API Working");
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server started on http://localhost:${port}`);
 });
